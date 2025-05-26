@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final String DBNAME = "Login.db";  // 修正：atatic → static
+    public static final String DBNAME = "Login.db";
 
     public DBHelper(Context context) {
         super(context, "Login.db", null, 1);
@@ -18,46 +18,54 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase MyDB) {
-        MyDB.execSQL("CREATE TABLE users(username TEXT PRIMARY KEY, password TEXT)");  // 修正：Table → TABLE（规范写法）
+        MyDB.execSQL("CREATE TABLE users(username TEXT PRIMARY KEY, password TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase MyDB, int oldVersion, int newVersion) {
-        MyDB.execSQL("DROP TABLE IF EXISTS users");  // 修正：drop Table → DROP TABLE（规范写法）
+        MyDB.execSQL("DROP TABLE IF EXISTS users");
     }
 
     public Boolean insertData(String username, String password) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("username", username);
-        contentValues.put("password", password);
+        // 加密密码
+        String encryptedPassword = EncryptionUtils.encryptPassword(password);
+        contentValues.put("password", encryptedPassword);
         long result = MyDB.insert("users", null, contentValues);
-        return result != -1;  // 简化返回逻辑
+        return result != -1;
     }
 
     public Boolean checkUsername(String username) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
         Cursor cursor = MyDB.rawQuery(
-                "SELECT * FROM users WHERE username = ?",  // 修正：+ → *，user → users
+                "SELECT * FROM users WHERE username = ?",
                 new String[]{username}
         );
         boolean exists = cursor.getCount() > 0;
-        cursor.close();  // 必须关闭Cursor，避免内存泄漏
+        cursor.close();
         return exists;
     }
 
     public Boolean checkUsernamePassword(String username, String password) {
-        SQLiteDatabase MyDB = this.getWritableDatabase();  // 修正：MyDb → MyDB（大小写统一）
+        SQLiteDatabase MyDB = this.getWritableDatabase();
+        // 加密密码
+        String encryptedPassword = EncryptionUtils.encryptPassword(password);
         Cursor cursor = MyDB.rawQuery(
-                "SELECT * FROM users WHERE username = ? AND password = ?",  // 修正：+ → *，user → users
-                new String[]{username, password}
+                "SELECT * FROM users WHERE username = ? AND password = ?",
+                new String[]{username, encryptedPassword}
         );
         boolean exists = cursor.getCount() > 0;
-        cursor.close();  // 必须关闭Cursor
+        cursor.close();
         return exists;
     }
+
     public Boolean isAdmin(String username, String password) {
-        return username.equals("admin") && password.equals("admin123");
+        // 加密管理员密码
+        String encryptedAdminPassword = EncryptionUtils.encryptPassword("admin123");
+        String encryptedPassword = EncryptionUtils.encryptPassword(password);
+        return username.equals("admin") && encryptedPassword.equals(encryptedAdminPassword);
     }
 
     // 获取所有用户
@@ -77,7 +85,9 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("username", newUsername);
-        values.put("password", newPassword);
+        // 加密新密码
+        String encryptedPassword = EncryptionUtils.encryptPassword(newPassword);
+        values.put("password", encryptedPassword);
         return db.update("users", values, "username = ?", new String[]{oldUsername}) > 0;
     }
 }
