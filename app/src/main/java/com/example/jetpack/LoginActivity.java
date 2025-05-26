@@ -2,6 +2,7 @@ package com.example.jetpack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,7 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText username, password;
     Button btnlogin;
-    DBHelper DB;  // 声明 DBHelper 变量
+    DBHelper DB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,28 +29,10 @@ public class LoginActivity extends AppCompatActivity {
         username = (EditText) findViewById(R.id.username1);
         password = (EditText) findViewById(R.id.password1);
         btnlogin = (Button) findViewById(R.id.btnsignin1);
-        DB = new DBHelper(this);  // 初始化 DBHelper
+        DB = new DBHelper(this);
 
-        btnlogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String user = username.getText().toString();  // 修正：getTxet → getText
-                String pass = password.getText().toString();  // 修正：getTxet → getText
-
-                if (user.equals("") || pass.equals("")) {
-                    Toast.makeText(LoginActivity.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    Boolean checkuserpass = DB.checkUsernamePassword(user, pass);  // 修正：checkusernamepassword → checkUsernamePassword
-                    if (checkuserpass) {  // 简化：checkuserpass==true → checkuserpass
-                        Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();  // 修正：Registered → Login
-                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
+        // 隐藏密码输入框的明文显示
+        password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         btnlogin.setOnClickListener(new View.OnClickListener() {
             @Override
