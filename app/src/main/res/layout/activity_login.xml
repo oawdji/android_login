@@ -10,25 +10,62 @@
 
     <EditText
         android:id="@+id/username1"
-        android:layout_width="match_parent"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:hint="用户名"
-        android:layout_marginTop="50dp"/>
+        android:layout_below="@+id/textView4"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="101dp"
+        android:layout_marginEnd="35dp"
+        android:hint="用户名" />
 
     <EditText
         android:id="@+id/password1"
-        android:layout_width="match_parent"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:hint="密码"
-        android:layout_marginTop="50dp"
-        android:layout_below = "@+id/username1"/>
+        android:layout_below="@+id/username1"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="35dp"
+        android:hint="密码" />
 
     <Button
         android:id="@+id/btnsignin1"
-        android:layout_width="match_parent"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:text="登录"
-        android:layout_marginTop="50dp"
-        android:layout_below = "@+id/password1"/>
+        android:layout_below="@+id/password1"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="86dp"
+        android:layout_marginEnd="35dp"
+        android:backgroundTint="#585ce5"
+        android:text="登录" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="136dp"
+        android:text="欢迎回来！"
+        android:textColor="#343965"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="20dp"
+        android:text="继续登录你的账号！"
+        android:textColor="#979ab2" />
 
 </RelativeLayout>

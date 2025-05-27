@@ -90,4 +90,12 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("password", encryptedPassword);
         return db.update("users", values, "username = ?", new String[]{oldUsername}) > 0;
     }
+
+    // 搜索用户
+    public Cursor searchUsers(String keyword) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM users WHERE username != 'admin' AND username LIKE ?";
+        String[] selectionArgs = new String[]{"%" + keyword + "%"};
+        return db.rawQuery(query, selectionArgs);
+    }
 }

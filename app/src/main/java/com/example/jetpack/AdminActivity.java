@@ -4,9 +4,11 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -19,6 +21,7 @@ public class AdminActivity extends AppCompatActivity {
     private ListView userListView;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> userList = new ArrayList<>();
+    private EditText searchEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +30,7 @@ public class AdminActivity extends AppCompatActivity {
 
         DB = new DBHelper(this);
         userListView = findViewById(R.id.userListView);
+        searchEditText = findViewById(R.id.searchEditText);
 
         // 初始化适配器
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, userList);
@@ -56,6 +60,23 @@ public class AdminActivity extends AppCompatActivity {
             String oldUsername = userList.get(position);
             showEditUserDialog(oldUsername);
         });
+
+        // 监听搜索输入框的回车键事件
+        searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, android.view.KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String keyword = searchEditText.getText().toString().trim();
+                    if (keyword.isEmpty()) {
+                        refreshUserList();
+                    } else {
+                        searchUsers(keyword);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void refreshUserList() {
@@ -68,10 +89,23 @@ public class AdminActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    private void searchUsers(String keyword) {
+        userList.clear();
+        Cursor cursor = DB.searchUsers(keyword);
+        while (cursor.moveToNext()) {
+            userList.add(cursor.getString(0)); // 添加用户名
+        }
+        cursor.close();
+        adapter.notifyDataSetChanged();
+    }
+
     private void showEditUserDialog(String oldUsername) {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit_user, null);
         EditText etUsername = view.findViewById(R.id.etUsername);
         EditText etPassword = view.findViewById(R.id.etPassword);
+
+        // 将原本的用户名填充到 EditText 中
+        etUsername.setText(oldUsername);
 
         new AlertDialog.Builder(this)
                 .setTitle("编辑用户")
@@ -83,6 +117,34 @@ public class AdminActivity extends AppCompatActivity {
                     if (DB.updateUser(oldUsername, newUsername, newPassword)) {
                         Toast.makeText(this, "用户信息已更新", Toast.LENGTH_SHORT).show();
                         refreshUserList();
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void showAddUserDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit_user, null);
+        EditText etUsername = view.findViewById(R.id.etUsername);
+        EditText etPassword = view.findViewById(R.id.etPassword);
+
+        new AlertDialog.Builder(this)
+                .setTitle("添加用户")
+                .setView(view)
+                .setPositiveButton("保存", (dialog, which) -> {
+                    String username = etUsername.getText().toString();
+                    String password = etPassword.getText().toString();
+
+                    if (username.isEmpty() || password.isEmpty()) {
+                        Toast.makeText(this, "请填写用户名和密码", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (DB.insertData(username, password)) {
+                        Toast.makeText(this, "用户添加成功", Toast.LENGTH_SHORT).show();
+                        refreshUserList();
+                    } else {
+                        Toast.makeText(this, "用户添加失败，可能用户名已存在", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("取消", null)
