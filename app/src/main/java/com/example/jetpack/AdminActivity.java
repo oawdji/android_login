@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -75,6 +76,15 @@ public class AdminActivity extends AppCompatActivity {
                     return true;
                 }
                 return false;
+            }
+        });
+
+        // 为添加用户按钮设置点击事件监听器
+        Button addUserButton = findViewById(R.id.button4);
+        addUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAddUserDialog();
             }
         });
     }
