@@ -124,6 +124,11 @@ public class AdminActivity extends AppCompatActivity {
                     String newUsername = etUsername.getText().toString();
                     String newPassword = etPassword.getText().toString();
 
+                    if (newUsername.length() > 20 || newPassword.length() > 20) {
+                        Toast.makeText(this, "用户名和密码不能超过20个字符", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     if (DB.updateUser(oldUsername, newUsername, newPassword)) {
                         Toast.makeText(this, "用户信息已更新", Toast.LENGTH_SHORT).show();
                         refreshUserList();
@@ -147,6 +152,9 @@ public class AdminActivity extends AppCompatActivity {
 
                     if (username.isEmpty() || password.isEmpty()) {
                         Toast.makeText(this, "请填写用户名和密码", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (username.length() > 20 || password.length() > 20) {
+                        Toast.makeText(this, "用户名和密码不能超过20个字符", Toast.LENGTH_SHORT).show();
                         return;
                     }
 

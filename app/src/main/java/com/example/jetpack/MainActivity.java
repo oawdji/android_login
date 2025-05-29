@@ -41,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if (user.equals("")||pass.equals("")||repass.equals(""))
                     Toast.makeText(MainActivity.this,"请填写账号密码", Toast.LENGTH_SHORT).show();
-                else {
+                else if (user.length() > 20 || pass.length() > 20) {
+                    Toast.makeText(MainActivity.this, "用户名和密码不能超过20个字符", Toast.LENGTH_SHORT).show();
+                } else {
                     if (pass.equals(repass)) {
                         Boolean checkuser = DB.checkUsername(user);
                         if (checkuser==false) {

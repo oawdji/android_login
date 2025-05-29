@@ -42,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (user.equals("") || pass.equals("")) {
                     Toast.makeText(LoginActivity.this, "请输入用户名和密码", Toast.LENGTH_SHORT).show();
+                } else if (user.length() > 20 || pass.length() > 20) {
+                    Toast.makeText(LoginActivity.this, "用户名和密码不能超过20个字符", Toast.LENGTH_SHORT).show();
                 } else {
                     // 检查是否是管理员
                     if (DB.isAdmin(user, pass)) {
